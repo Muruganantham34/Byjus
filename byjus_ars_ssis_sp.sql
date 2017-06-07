@@ -258,7 +258,7 @@ begin try
 					,(datediff(ss,s.attendance_in_time,isnull(s.attendance_out_time,s.attendance_in_time)) / 3600.00) * 60)
 					;
 		---Update the shift code for each employees
-		select * from #source    where employee_code = 'TNL201610076' and attendance_date = '2017-05-22'
+
 		update	tmp
 		set		shift_code = t.shift_code
 		from	#source	tmp
