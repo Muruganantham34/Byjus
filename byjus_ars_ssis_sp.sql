@@ -98,7 +98,7 @@ begin try
 				,attendance_date		
 				,attendance_date_time	'attendance_in_time'
 		from    #staging
-		where	io_flag = 'i'
+		 
 		
 		union all
 		
@@ -133,7 +133,7 @@ begin try
 				,attendance_date		
 				,attendance_date_time	'attendance_out_time'
 		from    #staging
-		where	io_flag = 'o'
+		 
 		
 		union all
 		
@@ -158,42 +158,7 @@ begin try
 				and a.attendance_date = b.attendance_date
 
  
-		;with attendance_max_in_cte as
-		(
-		select   employee_code
-				,attendance_date
-				,max(attendance_in_time) 'attendance_in_time'
-		from 
-		(
-		select  employee_code			
-				,attendance_date		
-				,attendance_date_time	'attendance_in_time'
-		from    #staging
-		where	io_flag = 'i'
-		
-		union all
-		
-		select t.employee_code,t.tmsht_date,tmsht_to_date
-		from   tmsht_hourly_based_dtl t (nolock)
-		join   byjus_ars_ssis_tbl s 
-				on t.employee_code = s.employee_code
-				and t.tmsht_date = s.attendance_date
-
-		
-		) a
-		group by a.employee_code
-				,a.attendance_date
-		)
-
-
-		update a
-		set    attendance_out_time = b.attendance_in_time
-		from   #source a 
-		join   attendance_max_in_cte b
-				on  a.employee_code	  = b.employee_code
-				and a.attendance_date = b.attendance_date
-				and b.attendance_in_time > a.attendance_out_time 
-		
+		 
  
 		update #source
 		set    regular_hours = (datediff(ss,attendance_in_time,isnull(attendance_out_time,attendance_in_time)) / 3600.00) * 60
